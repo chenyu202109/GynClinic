@@ -1,95 +1,54 @@
-# GynClinic 🏥
+# GynClinic <img src="./src/assets/doctor.png" alt="GynClinic Logo" width="60" style="vertical-align: middle;">
+
 
 **Development and Validation of a Traceable Reasoning Multi-Agent Framework for Simulating Real-World Gynecological Clinical Diagnosis**
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
 
 ---
 
 ## Overview
 
-GynClinic is a multi-agent framework that simulates real-world gynecological outpatient clinical diagnosis workflows. The system orchestrates multiple LLM-powered agents — including a **Doctor Interviewer**, a **Patient Simulator**, a **Summary Expert**, and an **Auxiliary Examination Agent** — to collaboratively complete the entire clinical reasoning process from initial patient interview to final revised diagnosis.
+**GynClinic** is a traceable reasoning multi-agent framework designed to simulate real-world gynecological outpatient workflows. It addresses the complexity of gynecological diagnosis (e.g., Abnormal Uterine Bleeding) and the limitations of static LLMs by implementing a closed-loop system of specialized agents.
 
-The framework features a **Retrieval-Augmented Generation (RAG)** pipeline with traceable citations, ensuring that every diagnostic recommendation is grounded in evidence from medical guidelines and literature.
+The framework leverages a two-stage reasoning strategy coupled with tool-augmented retrieval (Google search, knowledge-graph-based PubMed retrieval, and refined medical guideline-based retrieval-augmented generation tools) to generate evidence-based diagnostic chains. Evaluated on 2,176 clinical cases, GynClinic achieves a 73.1% average Top-1 accuracy in AUB diagnosis and demonstrates robust generalization across broader gynecological conditions. It serves as a high-fidelity decision-support tool that ensures clinical accuracy and traceable reasoning for medical practitioners.
 
 ## Key Features
 
-- 🩺 **Multi-Agent Collaboration** — Four specialized agents simulate a realistic outpatient encounter through role-based interactions.
-- 🔍 **RAG with Traceable Citations** — Integrates ChromaDB vector retrieval, Cohere reranking, and DSPy-powered citation faithfulness checking for transparent, evidence-based reasoning.
-- 🛠️ **Tool-Augmented Diagnosis** — Agents can autonomously invoke external tools including Google Search, PubMed literature query, and patient examination report retrieval.
+- 🩺 **Multi-Agent Collaboration** — Three specialized agents simulate a realistic outpatient encounter through role-based interactions.
 - 📋 **Two-Stage Diagnostic Pipeline** — Preliminary differential diagnosis followed by a revised diagnosis after auxiliary examination results, mirroring real clinical workflows.
-- 🤖 **Doctor–Patient Dialogue Simulation** — Realistic multi-turn conversations where the patient agent gradually reveals symptoms, just like a real outpatient visit.
+- 🛠️ **Tool-Augmented Diagnosis** — Agents can autonomously invoke external tools including Google search, knowledge-graph-based PubMed retrieval, and refined medical guideline-based retrieval-augmented generation tools.
+- 🔍 **RAG with Traceable Citations** — Integrates ChromaDB vector retrieval, Cohere reranking, and DSPy-powered citation faithfulness checking for transparent, evidence-based reasoning.
+
 
 ## Architecture
 
-```
-┌───────────────────────────────────────────────────────────────────┐
-│                         GynClinic Framework                       │
-│                                                                   │
-│  ┌─────────────┐    Multi-turn     ┌──────────────────┐           │
-│  │   Patient    │◄────Dialogue────►│ Doctor Interviewer│           │
-│  │  Simulator   │                  │    (GynAgent)     │           │
-│  └─────────────┘                   └────────┬─────────┘           │
-│                                             │                     │
-│                               ┌─────────────▼──────────────┐     │
-│                               │     Summary Expert         │     │
-│                               │  (Medical Record Summary)  │     │
-│                               └─────────────┬──────────────┘     │
-│                                             │                     │
-│  ┌──────────────────────────────────────────▼────────────────┐   │
-│  │              Stage 1: Preliminary Diagnosis               │   │
-│  │  GynAgent + RAG + Tools (Google, PubMed)                  │   │
-│  │  → 5 Differential Diagnoses + 8 Examination Items         │   │
-│  └──────────────────────────────────┬────────────────────────┘   │
-│                                     │                             │
-│  ┌──────────────────────────────────▼────────────────────────┐   │
-│  │              Auxiliary Examination Agent                   │   │
-│  │  Retrieves lab results, imaging reports, etc.             │   │
-│  └──────────────────────────────────┬────────────────────────┘   │
-│                                     │                             │
-│  ┌──────────────────────────────────▼────────────────────────┐   │
-│  │              Stage 2: Revised Diagnosis                   │   │
-│  │  GynAgent + RAG + Tools + Examination Results             │   │
-│  │  → Final 5 Diagnoses with Confidence Scores               │   │
-│  └───────────────────────────────────────────────────────────┘   │
-└───────────────────────────────────────────────────────────────────┘
-```
+<p align="center">
+  <img src="./src/assets/Framework.png" width="550" alt="GynClinic Architecture">
+</p>
 
-## Diagnostic Workflow
 
-The system executes a complete clinical diagnosis pipeline for each patient case:
+## Diagnostic Workflow Case
 
-### Phase 1: Doctor–Patient Interview
-The **Doctor Interviewer** agent conducts a multi-turn conversation with the **Patient Simulator** agent, gradually collecting symptoms, medical history, menstrual/marital history, and family history — mimicking a real outpatient consultation.
+<p align="center">
+  <img src="./src/assets/diagnosepipeline.png" width="550" alt="GynClinic Diagnostic Workflow Case">
+</p>
 
-### Phase 2: Medical Record Summarization
-The **Summary Expert** processes the dialogue history and generates a structured medical record including chief complaint, present medical history, past history, menstrual/marital history, and family history.
-
-### Phase 3: Preliminary Diagnosis (Stage 1)
-The **GynAgent** (Doctor Diagnosis Agent) analyzes the summarized medical record using:
-- **RAG pipeline** — Retrieves and reranks relevant medical guidelines from ChromaDB
-- **External tools** — Searches Google and PubMed for up-to-date clinical evidence
-- Outputs **5 differential diagnoses** with confidence scores and **8 recommended examination items**
-
-### Phase 4: Auxiliary Examinations
-The **Auxiliary Examination Agent** retrieves the patient's actual examination results (lab tests, imaging, etc.) based on the examination items recommended in Stage 1.
-
-### Phase 5: Revised Diagnosis (Stage 2)
-The **GynAgent** integrates all available information — medical history, physical examination, and auxiliary examination results — to produce a **revised diagnosis** with updated confidence scores and detailed clinical reasoning.
 
 ## Tech Stack
 
+
 | Component              | Technology                                        |
 |------------------------|---------------------------------------------------|
-| **LLM**                | OpenAI GPT-4o                                     |
+| **LLM**                | OpenAI GPT-5-mini(default model),                 |
 | **Agent Framework**    | LlamaIndex (OpenAI Agent / FunctionCallingAgent)  |
 | **RAG Framework**      | DSPy                                              |
 | **Vector Database**    | ChromaDB                                          |
 | **Embeddings**         | OpenAI `text-embedding-3-large`                   |
 | **Reranking**          | Cohere `rerank-english-v3.0`                      |
 | **Citation Checking**  | DSPy ChainOfThought (faithfulness verification)   |
-| **External Tools**     | Google Custom Search API, PubMed / arXiv           |
+| **External Tools**     | Google Custom Search API, PubMed                  |
 
 ## Project Structure
 
@@ -153,7 +112,7 @@ GynClinic/
 2. **Install dependencies**
 
    ```bash
-   pip install -r requirements.txt
+   pip install -r requirements.txt --no-dependencies
    ```
 
 3. **Configure environment variables**
@@ -168,7 +127,11 @@ GynClinic/
    GOOGLE_API_KEY="your-google-api-key"
    GOOGLE_SEARCH_ENGINE="your-google-search-engine-id"
    ```
-
+   https://platform.openai.com/account/api-keys
+   https://dashboard.cohere.com/welcome/register
+   https://developers.google.com/custom-search/v1/introduction?hl=de
+   
+   
 4. **Start ChromaDB server**
 
    ```bash
@@ -177,18 +140,18 @@ GynClinic/
 
 5. **Build the knowledge base** (first time only)
 
+   Download the medical knowledge base we have organized and place it in the directory 'perfect_oncology_data'
+   https://huggingface.co/datasets/chenyu202109/Agent_RAG_Dataset
+   
    ```bash
    cd src
-   # Preprocess data sources
-   python preprocess_sources.py -d complete_oncology_data
-
    # Create embeddings and index
    python embed.py --to_embed meditron
    ```
 
 ## Usage
 
-### Run the Diagnostic Pipeline
+### Run the GynAgent Diagnostic Pipeline
 
 ```bash
 cd src
@@ -199,10 +162,9 @@ This will:
 1. Load patient cases from `Imaging/data.json`
 2. For each patient, execute the full diagnostic workflow (interview → summary → preliminary diagnosis → auxiliary exams → revised diagnosis)
 3. Save results to `Imaging/result.json`
+4. Run records in the results directory
 
-### Multi-threaded Execution
-
-For batch processing with multi-threading support:
+### Run Baselines
 
 ```bash
 cd src
@@ -221,12 +183,12 @@ Patient cases are stored in JSON format (`Imaging/data.json`):
     "physical_examination": "**Physical examination**: ...",
     "check_report": {
         "Vaginal pH": "> 6",
-        "Trichomonas": "Detected",
         ...
     },
     "groud_truth": ["Trichomonas Vaginitis"]
 }
 ```
+If batch testing data is required, please download https://huggingface.co/datasets/chenyu202109/CDT-Book Then replace the Imaging/data.exe file.
 
 ## License
 
