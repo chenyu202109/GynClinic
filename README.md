@@ -144,8 +144,8 @@ GynClinic/
    GOOGLE_API_KEY="your-google-api-key"
    GOOGLE_SEARCH_ENGINE="your-google-search-engine-id"
    ```
-   https://platform.openai.com/account/api-keys
-   https://dashboard.cohere.com/welcome/register
+   https://platform.openai.com/account/api-keys \
+   https://dashboard.cohere.com/welcome/register \
    https://developers.google.com/custom-search/v1/introduction?hl=de
    
    
