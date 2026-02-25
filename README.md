@@ -1,8 +1,9 @@
-# GynClinic
+
+<h1><img src="./src/assets/doctor.png" alt="GynClinic Logo" width="60" style="vertical-align: middle;"> GynClinic</h1>
 
 
-<img src="./src/assets/doctor.png" alt="GynClinic Logo" width="60" style="vertical-align: middle;"> **Development and Validation of a Traceable Reasoning Multi-Agent Framework for Simulating Real-World Gynecological Clinical Diagnosis**
 
+**Development and Validation of a Traceable Reasoning Multi-Agent Framework for Simulating Real-World Gynecological Clinical Diagnosis**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
 
@@ -38,7 +39,7 @@ Evaluated on **2,176** clinical cases, GynClinic achieves a **73.1% average Top-
 </p>
 
 ## System Demonstration
-We will launch our system online as soon as possible. Please visit http://gynclinic.tech at that time
+**We will launch our system online as soon as possible. Please visit http://gynclinic.tech at that time**
 
 <p align="center">
   <img src="./src/assets/a1.png" width="700" alt="System Demonstration 1">
@@ -47,13 +48,12 @@ We will launch our system online as soon as possible. Please visit http://gyncli
   <img src="./src/assets/a2.png" width="700" alt="System Demonstration 2">
 </p>
 <p align="center">
-  <img src="./src/assets/A3.png" width="700" alt="System Demonstration 3">
+  <img src="./src/assets/a3.png" width="700" alt="System Demonstration 3">
 </p>
 
 
 
 ## Tech Stack
-
 
 | Component              | Technology                                        |
 |------------------------|---------------------------------------------------|
@@ -65,6 +65,7 @@ We will launch our system online as soon as possible. Please visit http://gyncli
 | **Reranking**          | Cohere `rerank-english-v3.0`                      |
 | **Citation Checking**  | DSPy ChainOfThought (faithfulness verification)   |
 | **External Tools**     | Google Custom Search API, PubMed                  |
+
 
 ## Project Structure
 
@@ -156,7 +157,7 @@ GynClinic/
 
 5. **Build the knowledge base** (first time only)
 
-   Download the medical knowledge base we have organized and place it in the directory 'perfect_oncology_data'
+   Download the medical knowledge base we have organized and place it in the directory `complete_oncology_data`
    https://huggingface.co/datasets/chenyu202109/Agent_RAG_Dataset
    
    ```bash
@@ -204,7 +205,7 @@ Patient cases are stored in JSON format (`Imaging/data.json`):
     "groud_truth": ["Trichomonas Vaginitis"]
 }
 ```
-If batch testing data is required, please download https://huggingface.co/datasets/chenyu202109/CDT-Book Then replace the Imaging/data.exe file.
+If batch testing data is required, please download https://huggingface.co/datasets/chenyu202109/CDT-Book Then replace the `Imaging/data.json`.
 
 ## License
 
