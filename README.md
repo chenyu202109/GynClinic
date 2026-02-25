@@ -1,7 +1,7 @@
-# GynClinic <img src="./src/assets/doctor.png" alt="GynClinic Logo" width="60" style="vertical-align: middle;">
+# GynClinic
 
 
-**Development and Validation of a Traceable Reasoning Multi-Agent Framework for Simulating Real-World Gynecological Clinical Diagnosis**
+<img src="./src/assets/doctor.png" alt="GynClinic Logo" width="60" style="vertical-align: middle;"> **Development and Validation of a Traceable Reasoning Multi-Agent Framework for Simulating Real-World Gynecological Clinical Diagnosis**
 
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
@@ -10,16 +10,18 @@
 
 ## Overview
 
-**GynClinic** is a traceable reasoning multi-agent framework designed to simulate real-world gynecological outpatient workflows. It addresses the complexity of gynecological diagnosis (e.g., Abnormal Uterine Bleeding) and the limitations of static LLMs by implementing a closed-loop system of specialized agents.
+**GynClinic** is a **traceable reasoning** multi-agent framework designed to simulate real-world gynecological outpatient workflows. It addresses the complexity of gynecological diagnosis (e.g., Abnormal Uterine Bleeding) and the limitations of static LLMs.
 
-The framework leverages a two-stage reasoning strategy coupled with tool-augmented retrieval (Google search, knowledge-graph-based PubMed retrieval, and refined medical guideline-based retrieval-augmented generation tools) to generate evidence-based diagnostic chains. Evaluated on 2,176 clinical cases, GynClinic achieves a 73.1% average Top-1 accuracy in AUB diagnosis and demonstrates robust generalization across broader gynecological conditions. It serves as a high-fidelity decision-support tool that ensures clinical accuracy and traceable reasoning for medical practitioners.
+The framework leverages a two-stage reasoning strategy coupled with **tool-augmented retrieval** (Google search, knowledge-graph-based PubMed retrieval, and guideline-based RAG) to generate evidence-based diagnostic chains. 
+
+Evaluated on **2,176** clinical cases, GynClinic achieves a **73.1% average Top-1 accuracy** in AUB diagnosis and demonstrates robust generalization across broader gynecological conditions. It serves as a high-fidelity **decision-support tool** that ensures clinical accuracy and traceable reasoning for medical practitioners.
 
 ## Key Features
 
-- 🩺 **Multi-Agent Collaboration** — Three specialized agents simulate a realistic outpatient encounter through role-based interactions.
-- 📋 **Two-Stage Diagnostic Pipeline** — Preliminary differential diagnosis followed by a revised diagnosis after auxiliary examination results, mirroring real clinical workflows.
-- 🛠️ **Tool-Augmented Diagnosis** — Agents can autonomously invoke external tools including Google search, knowledge-graph-based PubMed retrieval, and refined medical guideline-based retrieval-augmented generation tools.
-- 🔍 **RAG with Traceable Citations** — Integrates ChromaDB vector retrieval, Cohere reranking, and DSPy-powered citation faithfulness checking for transparent, evidence-based reasoning.
+- 🩺 **Multi-Agent Simulating Real-World Gynecological Clinical Diagnosis**
+- 📋 **GynAgent Two-Stage Clinical Reasoning Mechanism**
+- 🛠️ **Refined and Clinically Adapted Tools**
+- 🔍 **Traceable reasoning based on authoritative medical guidelines**
 
 
 ## Architecture
@@ -34,6 +36,20 @@ The framework leverages a two-stage reasoning strategy coupled with tool-augment
 <p align="center">
   <img src="./src/assets/diagnosepipeline.png" width="550" alt="GynClinic Diagnostic Workflow Case">
 </p>
+
+## System Demonstration
+We will launch our system online as soon as possible. Please visit http://gynclinic.tech at that time
+
+<p align="center">
+  <img src="./src/assets/a1.png" width="700" alt="System Demonstration 1">
+</p>
+<p align="center">
+  <img src="./src/assets/a2.png" width="700" alt="System Demonstration 2">
+</p>
+<p align="center">
+  <img src="./src/assets/A3.png" width="700" alt="System Demonstration 3">
+</p>
+
 
 
 ## Tech Stack
