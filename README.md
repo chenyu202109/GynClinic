@@ -5,7 +5,7 @@
 
 **Development and Validation of a Traceable Reasoning Multi-Agent Framework for Simulating Real-World Gynecological Clinical Diagnosis**
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Python 3.11](https://img.shields.io/badge/Python-3.11-blue.svg)](https://www.python.org/downloads/)
 
 ---
 
@@ -113,7 +113,7 @@ GynClinic/
 
 ### Prerequisites
 
-- Python 3.11+
+- Python 3.11.7
 - [ChromaDB](https://docs.trychroma.com/) server running locally
 - API keys for OpenAI, Cohere, and Google Custom Search
 
@@ -126,12 +126,14 @@ GynClinic/
    cd GynClinic
    ```
 
-2. **Install dependencies**
+2. **Create environment and Install dependencies**
 
    ```bash
+   conda create -n gynclinic python=3.11.7
+   conda activate gynclinic
    pip install -r requirements.txt --no-dependencies
    ```
-
+    `If you encounter dependency installation issues or any other problems, please contact me and I will package this project dependency for you.`
 3. **Configure environment variables**
 
    Copy the `.env` file and fill in your API keys:
@@ -144,10 +146,10 @@ GynClinic/
    GOOGLE_API_KEY="your-google-api-key"
    GOOGLE_SEARCH_ENGINE="your-google-search-engine-id"
    ```
-   https://platform.openai.com/account/api-keys
-   https://dashboard.cohere.com/welcome/register
-   https://developers.google.com/custom-search/v1/introduction?hl=de
-   
+   https://platform.openai.com/account/api-keys \
+   https://dashboard.cohere.com/welcome/register \
+   https://developers.google.com/custom-search/v1/introduction?hl=de 
+
    
 4. **Start ChromaDB server**
 
@@ -167,6 +169,10 @@ GynClinic/
    ```
 
 ## Usage
+
+### Before Run 
+open this file: `envs\gynclinic\Lib\site-packages\llama_index\llms\openai\utils.py`
+add model： `"gpt-5-mini-2025-08-07": 400000,`
 
 ### Run the GynAgent Diagnostic Pipeline
 

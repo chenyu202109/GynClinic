@@ -60,10 +60,6 @@ DEFAULT_EMBED_MODEL = "text-embedding-3-large"
 
 __all__ = ["CollectionWrapper", "RAG", "RAGLoader"]
 
-# 配置代理
-os.environ["HTTP_PROXY"] = "http://127.0.0.1:7890"
-os.environ["HTTPS_PROXY"] = "http://127.0.0.1:7890"
-
 def clean_string(string):
     return string.encode("utf-8", "replace").decode("utf-8", "replace")
 

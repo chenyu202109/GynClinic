@@ -9,9 +9,8 @@ from urllib.parse import urljoin
 import matplotlib.pyplot as plt
 import numpy as np
 import requests
-import torch
 from dotenv import load_dotenv
-from llama_hub.tools.google_search.base import GoogleSearchToolSpec
+# from llama_hub.tools.google_search.base import GoogleSearchToolSpec
 from llama_index.core import ServiceContext, VectorStoreIndex
 from llama_index.llms.openai import OpenAI
 from llama_index.multi_modal_llms.openai import OpenAIMultiModal
@@ -19,8 +18,17 @@ from llama_index.core.tools import FunctionTool
 from llama_index.core.node_parser import SentenceSplitter
 from loguru_logger import logger
 from skimage import io, transform
-import torch.nn.functional as F
 import uuid
+
+# Add these LlamaIndex specific imports:
+from llama_index.llms.openai import OpenAI
+from llama_index.embeddings.openai import OpenAIEmbedding
+
+# Other standard LlamaIndex v0.10+ imports you'll need based on your code:
+from llama_index.core import Settings
+from llama_index.core.node_parser import SentenceSplitter
+from llama_index.core.graph_stores import SimpleGraphStore
+from llama_index.core import StorageContext, KnowledgeGraphIndex
 
 from llama_index.core import download_loader
 from llama_index.embeddings.openai import OpenAIEmbedding
@@ -31,15 +39,12 @@ from llama_index.core.storage.storage_context import StorageContext
 from llama_index.core import KnowledgeGraphIndex   
 from llama_index.core.graph_stores import SimpleGraphStore      
 from pyvis.network import Network   
-
-from segment_anything import sam_model_registry
-
 import json
 import os
 import time
 from typing import List, Dict, Any
 from tqdm import tqdm
-from openai import OpenAI
+
 
 
 DEFAULT_MODEL_NAME = "gpt-4o"
@@ -76,22 +81,25 @@ def google_search(patient_id: str, query: str) -> str:
     - response (str): A structed text response that return 10 most relevent results of search_query.
     """
 
-    from llama_index.agent.openai import (
-        OpenAIAgent,
-    )
+    # from llama_index.agent.openai import (
+    #     OpenAIAgent,
+    # )
     
-    from llama_index.llms.openai import OpenAI
+    # from llama_index.llms.openai import OpenAI
     load_dotenv()
     google_api_key = os.getenv("GOOGLE_API_KEY")
     google_engine = os.getenv("GOOGLE_SEARCH_ENGINE")
 
+    from tools.google_search import GoogleSearchToolSpec
     tool_spec = GoogleSearchToolSpec(key=google_api_key, engine=google_engine, num=10)
+
     resp = tool_spec.google_search(query=query)
 
-    with open(f"./results/reference/{patient_id}-tool.txt", "a", encoding="utf-8") as f:
+    with open(f"./results/reference/{patient_id}_google.txt", "a", encoding="utf-8") as f:
         f.write(resp + "\n")
 
     # TODO: 根据文章的链接，依次对链接进行网页爬虫，然后将返回的内容进行数据清洗，包装为content
+    
     return resp
 
 @register
@@ -108,31 +116,58 @@ def query_pubmed(pubmed_search_terms: List[str], query: str) -> str:
     Returns:
         - Response: A detailed response that answers the query based on the retrieved pubmed documents.
     """
-    
-    import os
-    from dotenv import load_dotenv
+    # LlamaIndex Core Imports
+    from llama_index.core import Settings
+    from llama_index.core.node_parser import SentenceSplitter
+    from llama_index.core.graph_stores import SimpleGraphStore
+    from llama_index.core import StorageContext, KnowledgeGraphIndex
+    from llama_index.core import download_loader
+
+    # LlamaIndex OpenAI Integrations
+    from llama_index.llms.openai import OpenAI
+    from llama_index.embeddings.openai import OpenAIEmbedding
+
     load_dotenv()
     
+    print("Loading PubMed Reader...")
+    # Note: In newer LlamaIndex versions, you might prefer:
+    # from llama_index.readers.papers import PubmedReader
+    # loader = PubmedReader()
     PubmedReader = download_loader("PubmedReader")
     loader = PubmedReader()
 
     documents = []
     try: 
+        print(f"Fetching papers for search terms: {pubmed_search_terms[:2]}")
         for pubmed_search_term in pubmed_search_terms[:2]: 
-            documents.extend(loader.load_data(search_query=pubmed_search_term,max_results=1))
-        documents += loader.load_data(search_query=query,max_results=1)
-    except:
-        print("发生错误! 痛失检索一篇文章。。。")
+            documents.extend(loader.load_data(search_query=pubmed_search_term, max_results=1))
+            
+        print(f"Fetching papers for query: {query}")
+        documents += loader.load_data(search_query=query, max_results=1)
+    except Exception as e:
+        print(f"Error fetching papers: {e}")
         pass
     
     print("documents的长度为：==>")
     print(len(documents))
     print("=========")
     
-    ########################################知识图谱########################################
-    llm = OpenAI(model=DEFAULT_MODEL_NAME,
-                 system_prompt="You are a search assistant based on the PubMed knowledge graph, and your task is to answer user queries about PubMed. Users may ask some questions about treatment methods and medication choices. Please search for detailed answers. For treatment methods and medication choices, be sure to specify their names, maintain accuracy and relevance, and be detailed. Pleasing remember, for surgical intervention, radiation therapy, and chemotherapy, please be sure to confirm the specific amount of radiation and chemotherapy, the specific drug selection, and the specific location of the surgery. Don't break down, provide a structured and detailed statement.")
-    em_model =OpenAIEmbedding(model=DEFAULT_EMBED_MODEL)
+    # ----------------------------------------知识图谱----------------------------------------
+    print("Configuring LLM and Embedding models...")
+    llm = OpenAI(
+        model=DEFAULT_MODEL_NAME,
+        system_prompt=(
+            "You are a search assistant based on the PubMed knowledge graph, and your task is to answer user queries "
+            "about PubMed. Users may ask some questions about treatment methods and medication choices. Please search "
+            "for detailed answers. For treatment methods and medication choices, be sure to specify their names, "
+            "maintain accuracy and relevance, and be detailed. Please remember, for surgical intervention, radiation "
+            "therapy, and chemotherapy, please be sure to confirm the specific amount of radiation and chemotherapy, "
+            "the specific drug selection, and the specific location of the surgery. Don't break down, provide a structured "
+            "and detailed statement."
+        )
+    )
+    
+    em_model = OpenAIEmbedding(model=DEFAULT_EMBED_MODEL)
 
     Settings.llm = llm
     Settings.embed_model = em_model
@@ -141,9 +176,11 @@ def query_pubmed(pubmed_search_terms: List[str], query: str) -> str:
     Settings.context_window = 3900
 
     # 设置存储上下文   
+    print("Building Knowledge Graph Store...")
     graph_store = SimpleGraphStore()   
     storage_context = StorageContext.from_defaults(graph_store=graph_store)
     
+    print("Creating Knowledge Graph Index (This may take a moment to extract triplets)...")
     pubmed_index = KnowledgeGraphIndex.from_documents(
         documents=documents,
         max_triplets_per_chunk=3,
@@ -151,7 +188,8 @@ def query_pubmed(pubmed_search_terms: List[str], query: str) -> str:
         embed_model=em_model,
         include_embeddings=True,
         show_progress=True
-    )   
+    ) 
+
     # max_triplets_per_chunk：指的是每个文本块中能够提取的最大三元组数量。降低这个数值可以提升处理效率，因为它减少了需要处理的三元组数量。
     # include_embeddings：用于决定索引中是否包含嵌入项。默认设置为False，因为生成嵌入项在计算上可能相当耗费资源。
     # 10个documents 要是256chunksize--》1024      1024-->91
@@ -167,12 +205,15 @@ def query_pubmed(pubmed_search_terms: List[str], query: str) -> str:
     # net.save_graph(save_dir+".html")   # 记得在write时候 设置encoding="utf-8"
     
     # from IPython.display import HTML, display   
-    # HTML(filename="rag_graph.html")   
+    # HTML(filename="rag_graph.html")     
 
     myquery = f"Please conduct a detailed search of the knowledge graph and query for this question: {query}, and then return it to us with detailed results"
-    # # 到知识图谱中进行查询 并且返回出qurry后的结果
-    return pubmed_index.as_query_engine(llm).query(myquery).response
-    ########################################知识图谱########################################
+    
+    print("Querying the Knowledge Graph Engine...")
+    # 到知识图谱中进行查询 并且返回出qurry后的结果
+    return pubmed_index.as_query_engine().query(myquery).response
+    # ----------------------------------------知识图谱----------------------------------------   
+    
 
 def call_llm_with_retry(prompt_template: str) -> Dict[str, Any]:
     """
@@ -183,6 +224,7 @@ def call_llm_with_retry(prompt_template: str) -> Dict[str, Any]:
     load_dotenv()
 
     # 初始化 OpenAI 客户端
+    from openai import OpenAI
     client = OpenAI()
 
     # 配置常量
