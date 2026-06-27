@@ -143,7 +143,6 @@ class CollectionWrapper:
         # 判断传入的是单个路径还是列表。如果是单个路径，会把它转成列表，方便后续统一处理。
         if isinstance(data_file_path, PathLike):
             data_file_path = [data_file_path]
-
         for file_path in data_file_path:
             logger.info(f"Adding documents from {file_path}.")
 

@@ -1,73 +1,50 @@
 
-<h1><img src="./src/assets/doctor.png" alt="GynClinic Logo" width="60" style="vertical-align: middle;"> GynClinic</h1>
+<h1>GynClinic</h1>
 
+**The Official Repository** *Development and Validation of a Traceable Reasoning Multi-Agent Framework for Simulating Real-World Gynecological Clinical Diagnosis* 
 
-
-**Development and Validation of a Traceable Reasoning Multi-Agent Framework for Simulating Real-World Gynecological Clinical Diagnosis**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Python 3.11](https://img.shields.io/badge/Python-3.11-blue.svg)](https://www.python.org/downloads/)
 
 ---
 
 ## Overview
-
-**GynClinic** is a **traceable reasoning** multi-agent framework designed to simulate real-world gynecological outpatient workflows. It addresses the complexity of gynecological diagnosis (e.g., Abnormal Uterine Bleeding) and the limitations of static LLMs.
-
-The framework leverages a two-stage reasoning strategy coupled with **tool-augmented retrieval** (Google search, knowledge-graph-based PubMed retrieval, and guideline-based RAG) to generate evidence-based diagnostic chains. 
-
-Evaluated on **2,176** clinical cases, GynClinic achieves a **73.1% average Top-1 accuracy** in AUB diagnosis and demonstrates robust generalization across broader gynecological conditions. It serves as a high-fidelity **decision-support tool** that ensures clinical accuracy and traceable reasoning for medical practitioners.
-
-## Key Features
-
-- 🩺 **Multi-Agent Simulating Real-World Gynecological Clinical Diagnosis**
-- 📋 **GynAgent Two-Stage Clinical Reasoning Mechanism**
-- 🛠️ **Refined and Clinically Adapted Tools**
-- 🔍 **Traceable reasoning based on authoritative medical guidelines**
+- **Multi-Agent Simulating Real-World Gynecological Clinical Diagnosis**
+- **GynAgent Two-Stage Clinical Reasoning Mechanism**
+- **Refined and Clinically Adapted Tools**
+- **Traceable reasoning based on authoritative medical guidelines**
 
 
 ## Architecture
 
-<p align="center">
+<p>
   <img src="./src/assets/Framework.png" width="550" alt="GynClinic Architecture">
 </p>
 
 
-## Diagnostic Workflow Case
+## System
+**We launched our system online. Welcome visit: http://www.gynclinic.tech**
 
-<p align="center">
-  <img src="./src/assets/diagnosepipeline.png" width="550" alt="GynClinic Diagnostic Workflow Case">
+<p>
+  <img src="./src/assets/3.1.png" width="700" alt="System Demonstration 1">
 </p>
-
-## System Demonstration
-**We will launch our system online as soon as possible. Please visit http://gynclinic.tech at that time**
-
-<p align="center">
-  <img src="./src/assets/a1.png" width="700" alt="System Demonstration 1">
-</p>
-<p align="center">
-  <img src="./src/assets/a2.png" width="700" alt="System Demonstration 2">
-</p>
-<p align="center">
-  <img src="./src/assets/a3.png" width="700" alt="System Demonstration 3">
-</p>
-
 
 
 ## Tech Stack
 
 | Component              | Technology                                        |
 |------------------------|---------------------------------------------------|
-| **LLM**                | OpenAI GPT-5-mini(default model),                 |
-| **Agent Framework**    | LlamaIndex (OpenAI Agent / FunctionCallingAgent)  |
+| **LLM**                | OpenAI GPT-5-mini (Default model)                 |
+| **Agent Framework**    | LlamaIndex (FunctionCallingAgent)                 | 
 | **RAG Framework**      | DSPy                                              |
 | **Vector Database**    | ChromaDB                                          |
 | **Embeddings**         | OpenAI `text-embedding-3-large`                   |
 | **Reranking**          | Cohere `rerank-english-v3.0`                      |
-| **Citation Checking**  | DSPy ChainOfThought (faithfulness verification)   |
+| **Citation Checking**  | DSPy ChainOfThought                               |
 | **External Tools**     | Google Custom Search API, PubMed                  |
 
 
-## Project Structure
+## Project Document Introduction
 
 ```
 GynClinic/
@@ -157,7 +134,7 @@ GynClinic/
    chroma run --path ./src/chroma_db_oncology
    ```
 
-5. **Build the knowledge base** (first time only)
+5. **Build the knowledge base**
 
    Download the medical knowledge base we have organized and place it in the directory `complete_oncology_data`
    https://huggingface.co/datasets/chenyu202109/Agent_RAG_Dataset
@@ -181,7 +158,6 @@ cd src
 python 0run.py
 ```
 
-This will:
 1. Load patient cases from `Imaging/data.json`
 2. For each patient, execute the full diagnostic workflow (interview → summary → preliminary diagnosis → auxiliary exams → revised diagnosis)
 3. Save results to `Imaging/result.json`
