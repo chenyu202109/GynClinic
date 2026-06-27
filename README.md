@@ -15,18 +15,18 @@
 - **Traceable reasoning based on authoritative medical guidelines**
 
 
-## Architecture
+<!-- ## Architecture
 
 <p>
   <img src="./src/assets/Framework.png" width="550" alt="GynClinic Architecture">
-</p>
+</p> -->
 
 
 ## System
 **We launched our system online. Welcome visit: http://www.gynclinic.tech**
 
-<p>
-  <img src="./src/assets/3.1.png" width="700" alt="System Demonstration 1">
+<p align='center'>
+  <img src="./src/assets/3.1.png" alt="System Demonstration 1">
 </p>
 
 
